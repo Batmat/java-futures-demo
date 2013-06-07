@@ -47,27 +47,9 @@ public class FuturesTest
 	public void withFutures() throws Exception
 	{
 		long before = System.currentTimeMillis();
-		Future<Integer> apples = executor.submit(new Callable<Integer>()
-		{
-			public Integer call() throws Exception
-			{
-				return service.countApples();
-			}
-		});
-		Future<Integer> bananas = executor.submit(new Callable<Integer>()
-		{
-			public Integer call() throws Exception
-			{
-				return service.countBananas();
-			}
-		});
-		Future<Integer> carWheels = executor.submit(new Callable<Integer>()
-		{
-			public Integer call() throws Exception
-			{
-				return service.countCarWheels();
-			}
-		});
+		Future<Integer> apples    = executor.submit( () -> service.countApples()    );
+		Future<Integer> bananas   = executor.submit( () -> service.countBananas()   );
+		Future<Integer> carWheels = executor.submit( () -> service.countCarWheels() );
 
 		assertThat(apples.get() + bananas.get() + carWheels.get()).isEqualTo(30);
 		long after = System.currentTimeMillis();
