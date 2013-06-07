@@ -28,9 +28,12 @@ public class FuturesTest
 	// Let's test adding meaningful things.
 	public void withoutFutures() throws Exception
 	{
+		long before = System.currentTimeMillis();
 		// Without futures, it's gonna take the addition of each operation time
 		assertThat(service.countApples() + service.countBananas() + service.countCarWheels())
 			.isEqualTo(30);
+		long after = System.currentTimeMillis();
+		System.out.println("Test without futures took " + (after - before) / 1000 + " seconds");
 	}
 
 	ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -43,6 +46,7 @@ public class FuturesTest
 	 */
 	public void withFutures() throws Exception
 	{
+		long before = System.currentTimeMillis();
 		Future<Integer> apples = executor.submit(new Callable<Integer>()
 		{
 			public Integer call() throws Exception
@@ -66,6 +70,8 @@ public class FuturesTest
 		});
 
 		assertThat(apples.get() + bananas.get() + carWheels.get()).isEqualTo(30);
+		long after = System.currentTimeMillis();
+		System.out.println("Test with futures took " + (after - before) / 1000 + " seconds");
 	}
 
 }
