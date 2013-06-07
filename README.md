@@ -8,6 +8,10 @@ If you have just a typical Maven installation configured, this should show two t
 * the second one, using futures, will take about 15 seconds (the longest computation of the three)
   to complete since it'll run the "computations" in parallel.
 
+There's two branches in this git repo:
+* _master_ contains java6 code. It uses anonymous callable instances
+* _lambdas_ contains java8 code. It uses lambdas instead of anonymous classes. You should see the code is far more concise and clear (provided you know the (a,b) -> a+b typical lambda syntax, granted).
+
 Hope this helps.
 
 Don't hesitate to give feedback.
