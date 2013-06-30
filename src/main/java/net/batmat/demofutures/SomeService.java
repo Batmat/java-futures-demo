@@ -1,21 +1,21 @@
 package net.batmat.demofutures;
 public class SomeService
 {
-	public int countApples() throws InterruptedException
+	public int countApples()
 	{
-		Thread.sleep(5000);
+		try {Thread.sleep(5000);}catch(InterruptedException e){throw new RuntimeException(e);}
 		return 5;
 	}
 
-	public int countBananas() throws InterruptedException
+	public int countBananas()
 	{
-		Thread.sleep(15000);
+		try {Thread.sleep(15000);}catch(InterruptedException e){throw new RuntimeException(e);}
 		return 15;
 	}
 
-	public int countCarWheels() throws InterruptedException
+	public int countCarWheels()
 	{
-		Thread.sleep(10000);
+		try {Thread.sleep(10000);}catch(InterruptedException e){throw new RuntimeException(e);}
 		return 10;
 	}
 }

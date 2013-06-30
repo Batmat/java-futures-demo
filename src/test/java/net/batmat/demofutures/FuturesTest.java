@@ -5,7 +5,9 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
@@ -31,19 +33,19 @@ public class FuturesTest
 		long before = System.currentTimeMillis();
 		// Without futures, it's gonna take the addition of each operation time
 		assertThat(service.countApples() + service.countBananas() + service.countCarWheels())
-			.isEqualTo(30);
+		.isEqualTo(30);
 		long after = System.currentTimeMillis();
 		System.out.println("Test without futures took " + (after - before) / 1000 + " seconds");
 	}
 
 	ExecutorService executor = Executors.newFixedThreadPool(3);
 
-	@Test
 	/**
 	 * Here, with Future, a bit more complex and mostly more verbose (lambdas@java8 will help a lot here),
 	 * but quicker since it should roughly take the maximum time of the three computations instead 
 	 * of theirs addition.
 	 */
+	@Test
 	public void withFutures() throws Exception
 	{
 		long before = System.currentTimeMillis();
@@ -56,4 +58,34 @@ public class FuturesTest
 		System.out.println("Test with futures took " + (after - before) / 1000 + " seconds");
 	}
 
+	/**
+	 * Even more Async version using CompletableFuture.
+	 *
+	 * Thanks @bluxte and @dplaindoux
+	 */
+	@Test
+	public void withCompletableFutures()
+	{
+		long before = System.currentTimeMillis();
+		CompletableFuture<Integer> apples    = CompletableFuture.supplyAsync( () -> service.countApples()   , executor );
+		CompletableFuture<Integer> bananas   = CompletableFuture.supplyAsync( () -> service.countBananas()  , executor );
+		CompletableFuture<Integer> carWheels = CompletableFuture.supplyAsync( () -> service.countCarWheels(), executor );
+
+		CompletableFuture<Void> doAll = CompletableFuture.allOf(apples, bananas, carWheels);
+
+		doAll.thenRun( () -> {
+			// Meeeh, we have to try/catch the exception get() can throw, making a bit longer the lambda :-(
+			try
+			{
+				assertThat( apples.get() + bananas.get() + carWheels.get() ).isEqualTo(30);
+			}
+			catch(ExecutionException|InterruptedException e)
+			{
+				throw new RuntimeException(e);
+			}
+
+			long after = System.currentTimeMillis();
+			System.out.println("Test with Java8 CompletableFutures took " + (after - before) / 1000 + " seconds");
+		});
+	}
 }
