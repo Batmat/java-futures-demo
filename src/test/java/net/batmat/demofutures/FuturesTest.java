@@ -34,6 +34,8 @@ public class FuturesTest
 			.isEqualTo(30);
 		long after = System.currentTimeMillis();
 		System.out.println("Test without futures took " + (after - before) / 1000 + " seconds");
+		
+		assertThat(after - before).isGreaterThan(29000).isLessThan(31000);
 	}
 
 	ExecutorService executor = Executors.newFixedThreadPool(3);
